@@ -1,2 +1,10 @@
 node_modules
 .env
+
+oga_craft/.anchor
+oga_craft/.DS_Store
+oga_craft/target
+oga_craft/**/*.rs.bk
+oga_craft/node_modules
+oga_craft/test-ledger
+oga_craft/.yarn
