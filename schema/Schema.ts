@@ -89,7 +89,7 @@ const UserSchema: Schema<IUser> = new mongoose.Schema({
   profile_picture: String,
   categories: [String],
   years_of_experience: Number,
-  account_type: String,
+  account_type: { type: String, enum: ["artisan", "client"] },
   reviews: [Review]
 });
 

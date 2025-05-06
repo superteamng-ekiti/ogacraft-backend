@@ -8,7 +8,7 @@ import {
 
 const auth_router = Router();
 
-auth_router.post("/", auth_controller);
+auth_router.post("/", authenticated, auth_controller);
 auth_router.get("/fetch/:email", fetch_user_controller);
 auth_router.put("/update-profile", authenticated, update_profile_controller);
 // auth_router.get("/gimmie", async (req, res) => {

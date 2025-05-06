@@ -10,7 +10,8 @@ import { PRIVY_VERIFICATION_KEY } from "../utils/environment.ts";
 
 const auth_controller = async (req: Request, res: Response) => {
   try {
-    const { email, gender, first_name, last_name, location } = req.body;
+    const { email, gender, first_name, last_name, location, account_type } =
+      req.body;
     if (!email) {
       res.status(409).json({
         response: "something went wrong trying to register you",
@@ -33,7 +34,7 @@ const auth_controller = async (req: Request, res: Response) => {
         first_name,
         last_name,
         location,
-        account_type: "client"
+        account_type
       });
       await new_user.save();
       res.status(200).json({
