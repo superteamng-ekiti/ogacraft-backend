@@ -44,6 +44,7 @@ export interface IUser {
   years_of_experience: number;
   account_type: IAccountype;
   reviews: IReview[];
+  projects: string[];
 }
 
 interface IReview {
@@ -90,7 +91,8 @@ const UserSchema: Schema<IUser> = new mongoose.Schema({
   categories: [String],
   years_of_experience: Number,
   account_type: { type: String, enum: ["artisan", "client"] },
-  reviews: [Review]
+  reviews: [Review],
+  projects: [String]
 });
 
 export default mongoose.model<IUser>("ogacraftuser", UserSchema);
