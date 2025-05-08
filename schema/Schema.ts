@@ -90,7 +90,11 @@ const UserSchema: Schema<IUser> = new mongoose.Schema({
   profile_picture: String,
   categories: [String],
   years_of_experience: Number,
-  account_type: { type: String, enum: ["artisan", "client"] },
+  account_type: {
+    type: String,
+    enum: ["artisan", "client"],
+    required: [true, "provide 'artisan' or 'client' as account_type"]
+  },
   reviews: [Review],
   projects: [String]
 });
