@@ -61,7 +61,9 @@ const fetch_user_controller = async (req: Request, res: Response) => {
       });
     }
 
-    const existing_user = await UserSchema.findOne({ email });
+    const existing_user = await UserSchema.findOne({
+      email: email.toLowerCase()
+    });
 
     if (existing_user) {
       res.status(200).json({
