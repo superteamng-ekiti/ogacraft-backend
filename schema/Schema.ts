@@ -93,7 +93,8 @@ const UserSchema: Schema<IUser> = new mongoose.Schema({
   account_type: {
     type: String,
     enum: ["artisan", "client"],
-    required: [true, "provide 'artisan' or 'client' as account_type"]
+    required: [true, "provide 'artisan' or 'client' as account_type"],
+    default: "client"
   },
   reviews: [Review],
   projects: [String]
