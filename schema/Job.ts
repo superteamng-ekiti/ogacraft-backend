@@ -42,19 +42,16 @@ const JobSchema: Schema<IUser> = new mongoose.Schema({
   client: mongoose.Schema.Types.ObjectId,
   description: {
     type: String,
-    required: [true, "provide description"],
-    unique: true
+    required: [true, "provide description"]
   },
   deadline: Number,
   location: {
     type: String,
-    required: [true, "provide location"],
-    unique: true
+    required: [true, "provide location"]
   },
   budget: {
     type: String,
-    required: [true, "provide budget"],
-    unique: true
+    required: [true, "provide budget"]
   },
   images: [String],
   categories: [String]
