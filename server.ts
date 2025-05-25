@@ -7,6 +7,7 @@ import { log } from "./utils/globals.ts";
 import { connect } from "./utils/database.ts";
 import { auth_router } from "./routes/auth.routes.ts";
 import { extra_router } from "./routes/fetch.routes.ts";
+import { job_router } from "./routes/job.routes.ts";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(
 
 app.use("/api/auth", auth_router);
 app.use("/api/query", extra_router);
+app.use("/api/jobs", job_router);
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
