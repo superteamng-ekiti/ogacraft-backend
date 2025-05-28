@@ -43,41 +43,36 @@ interface IUser {
   updatedAt: Date;
 }
 
-const JobSchema: Schema<IUser> = new mongoose.Schema({
-  aritisan: mongoose.Schema.Types.ObjectId,
-  client: mongoose.Schema.Types.ObjectId,
-  title: {
-    type: String,
-    required: [true, "provide title"],
+const JobSchema: Schema<IUser> = new mongoose.Schema(
+  {
+    aritisan: mongoose.Schema.Types.ObjectId,
+    client: mongoose.Schema.Types.ObjectId,
+    title: {
+      type: String,
+      required: [true, "provide title"]
+    },
+    description: {
+      type: String,
+      required: [true, "provide description"]
+    },
+    deadline: Number,
+    location: {
+      type: String,
+      required: [true, "provide location"]
+    },
+    budget: {
+      type: String,
+      required: [true, "provide budget"]
+    },
+    images: [String],
+    categories: [String],
+    status: {
+      type: String,
+      enum: ["open", "ongoing", "completed"],
+      default: "open"
+    }
   },
-  description: {
-    type: String,
-<<<<<<< HEAD
-    required: [true, "provide description"]
-=======
-    required: [true, "provide description"],
->>>>>>> 5f16a03 (implemented some feature)
-  },
-  deadline: Number,
-  location: {
-    type: String,
-    required: [true, "provide location"]
-  },
-  budget: {
-    type: String,
-<<<<<<< HEAD
-    required: [true, "provide budget"]
-=======
-    required: [true, "provide budget"],
->>>>>>> 5f16a03 (implemented some feature)
-  },
-  images: [String],
-  categories: [String],
-  status: {
-    type: String,
-    enum: ["open", "ongoing", "completed"],
-    default: "open"
-  }
-}, { timestamps: true });
+  { timestamps: true }
+);
 
 export default mongoose.model<IUser>("ogacraftjob", JobSchema);
