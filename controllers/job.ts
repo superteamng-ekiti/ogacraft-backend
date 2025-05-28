@@ -1,21 +1,23 @@
 // controllers/jobController.ts
 import { type Request, type Response } from "express";
-import Job from "../schema/Job.ts";
+import Job, { type JobStatus } from "../schema/Job.ts";
 import { type category } from "../schema/Schema.ts";
 
 export const createJob = async (req: Request, res: Response) => {
   try {
     let {
       client,
+      title,
       description,
       deadline,
       location,
       budget,
       images,
-      categories
+      categories,
+      status
     } = req.body;
 
-    if (!description || !location || !budget || !categories) {
+    if (!description || !location || !budget || !categories || !title) {
       res.status(400).json({
         status: "fail",
         message: "Missing required fields",
@@ -31,7 +33,9 @@ export const createJob = async (req: Request, res: Response) => {
       location,
       budget,
       images,
-      categories
+      categories,
+      title,
+      status: status || "open"
     });
 
     res.status(201).json({
@@ -99,6 +103,61 @@ export const getAllJobs = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllJobsByClient = async (req: Request, res: Response) => {
+  try {
+    const { client_id } = req.params
+    const page = parseInt(req.query.page as string) || 1
+    const limit = parseInt(req.query.limit as string) || 10
+    const skip = (page - 1) * limit
+
+    // Validate client_id
+    if (!client_id) {
+      res.status(400).json({
+        status: "fail",
+        message: "Client ID is required",
+        response: null
+      })
+      return
+    }
+
+    // Find jobs by client with pagination and populate artisan details
+    const jobs = await Job.find({ client: client_id })
+      .populate({
+        path: "aritisan",
+        select: "first_name last_name email location profile_description profile_picture categories years_of_experience reviews" // Select only necessary fields
+      })
+      .sort({ createdAt: -1 }) // Sort by newest first
+      .skip(skip)
+      .limit(limit)
+
+    // Get total count for pagination
+    const total = await Job.countDocuments({ client: client_id })
+
+    res.status(200).json({
+      status: "success",
+      message: "Jobs fetched successfully",
+      response: {
+        jobs,
+        pagination: {
+          total,
+          page,
+          limit,
+          pages: Math.ceil(total / limit)
+        }
+      }
+    })
+    return
+  } catch (error) {
+    console.error("Error fetching client jobs:", error)
+    res.status(500).json({
+      status: "error",
+      message: "Failed to fetch client jobs",
+      response: error instanceof Error ? error.message : String(error)
+    })
+    return
+  }
+}
+
 export const getJobById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -149,7 +208,8 @@ export const updateJob = async (req: Request, res: Response) => {
       location,
       budget,
       images,
-      categories
+      categories,
+      status
     }: {
       description?: string;
       deadline?: number;
@@ -157,16 +217,16 @@ export const updateJob = async (req: Request, res: Response) => {
       budget?: string;
       images?: string[];
       categories?: string[];
+      status?: JobStatus;
     } = req.body;
 
-    // if (aritisan !== undefined) job.aritisan = aritisan;
-    // if (client !== undefined) job.client = client;
     if (description !== undefined) job.description = description;
     if (deadline !== undefined) job.deadline = deadline;
     if (location !== undefined) job.location = location;
     if (budget !== undefined) job.budget = budget;
     if (images !== undefined) job.images = images;
     if (categories !== undefined) job.categories = categories as category[];
+    if (status !== undefined) job.status = status;
 
     const updated = await job.save();
 
