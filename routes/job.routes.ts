@@ -5,7 +5,8 @@ import {
   getJobById,
   updateJob,
   deleteJob,
-  getAllJobsByClient
+  getAllJobsByClient,
+  getJobProposals
 } from "../controllers/job.ts";
 import { validateCategories } from "../middleware/job.ts";
 import { authenticated } from "../middleware/auth.ts";
@@ -14,6 +15,7 @@ const job_router = express.Router();
 
 job_router.post("/", authenticated, validateCategories, createJob);
 job_router.get("/", getAllJobs);
+job_router.get("/proposals", getJobProposals);
 job_router.get("/client/:client_id", getAllJobsByClient);
 job_router.get("/:id", getJobById);
 job_router.put("/:id", authenticated, validateCategories, updateJob);

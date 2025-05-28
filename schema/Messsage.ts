@@ -1,63 +1,37 @@
 import mongoose, { Schema } from "mongoose";
 
-export type category =
-  | "carpentry"
-  | "masonry"
-  | "electrical"
-  | "plumbing"
-  | "welding"
-  | "painting"
-  | "tiling"
-  | "roofing"
-  | "mechanical"
-  | "metalwork"
-  | "blacksmithing"
-  | "woodwork"
-  | "furniture_making"
-  | "automobile_repair"
-  | "electronics_repair"
-  | "upholstery"
-  | "glasswork"
-  | "flooring"
-  | "generator_repair"
-  | "air_conditioning"
-  | "sewing_tailoring"
-  | "cobbler"
-  | "bricklaying"
-  | "drywall_installation";
-
-interface IUser {
-  aritisan: typeof mongoose.Types.ObjectId;
-  client: typeof mongoose.Types.ObjectId;
-  description: string;
-  deadline: number;
-  location: string;
-  budget: string;
-  images: string[];
-  categories: category[];
+interface IMessage {
+  sender: mongoose.Types.ObjectId;
+  receiver: mongoose.Types.ObjectId;
+  job: mongoose.Types.ObjectId;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const MessageSchema: Schema<IUser> = new mongoose.Schema({
-  aritisan: mongoose.Types.ObjectId,
-  client: mongoose.Types.ObjectId,
-  description: {
-    type: String,
-    required: [true, "provide description"],
-    unique: true
+const MessageSchema: Schema<IMessage> = new mongoose.Schema(
+  {
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ogacraftuser",
+      required: true
+    },
+    receiver: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ogacraftuser",
+      required: true
+    },
+    job: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ogacraftjob",
+      required: true
+    },
+    content: {
+      type: String,
+      required: true
+    }
   },
-  deadline: Number,
-  location: {
-    type: String,
-    required: [true, "provide location"],
-    unique: true
-  },
-  budget: {
-    type: String,
-    required: [true, "provide budget"],
-    unique: true
-  },
-  images: [String],
-  categories: [String]
-});
+  { timestamps: true }
+);
 
-export default mongoose.model<IUser>("ogacraftmessage", MessageSchema);
+export default mongoose.model<IMessage>("Message", MessageSchema);

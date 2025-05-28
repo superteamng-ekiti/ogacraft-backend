@@ -1,5 +1,6 @@
 import express, { type Request, type Response } from "express";
 import cookieParser from "cookie-parser";
+import http from "http";
 
 import cors from "cors";
 import { MONGO_URI, PORT } from "./utils/environment.ts";
@@ -8,8 +9,13 @@ import { connect } from "./utils/database.ts";
 import { auth_router } from "./routes/auth.routes.ts";
 import { extra_router } from "./routes/fetch.routes.ts";
 import { job_router } from "./routes/job.routes.ts";
+import { initSocket } from "./socket/socket.ts";
+import { message_router } from "./routes/message.routes.ts";
 
 const app = express();
+const server = http.createServer(app);
+
+const io = initSocket(server);
 
 app.use(cookieParser());
 app.use(express.json());
@@ -22,6 +28,7 @@ app.use(
 app.use("/api/auth", auth_router);
 app.use("/api/query", extra_router);
 app.use("/api/jobs", job_router);
+app.use("/api/messages", message_router);
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({

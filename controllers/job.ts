@@ -2,6 +2,7 @@
 import { type Request, type Response } from "express";
 import Job, { type JobStatus } from "../schema/Job.ts";
 import { type category } from "../schema/Schema.ts";
+import Proposal from "../schema/Proposal.ts";
 
 export const createJob = async (req: Request, res: Response) => {
   try {
@@ -105,10 +106,10 @@ export const getAllJobs = async (req: Request, res: Response) => {
 
 export const getAllJobsByClient = async (req: Request, res: Response) => {
   try {
-    const { client_id } = req.params
-    const page = parseInt(req.query.page as string) || 1
-    const limit = parseInt(req.query.limit as string) || 10
-    const skip = (page - 1) * limit
+    const { client_id } = req.params;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
 
     // Validate client_id
     if (!client_id) {
@@ -116,22 +117,23 @@ export const getAllJobsByClient = async (req: Request, res: Response) => {
         status: "fail",
         message: "Client ID is required",
         response: null
-      })
-      return
+      });
+      return;
     }
 
     // Find jobs by client with pagination and populate artisan details
     const jobs = await Job.find({ client: client_id })
       .populate({
         path: "aritisan",
-        select: "first_name last_name email location profile_description profile_picture categories years_of_experience reviews" // Select only necessary fields
+        select:
+          "first_name last_name email location profile_description profile_picture categories years_of_experience reviews" // Select only necessary fields
       })
       .sort({ createdAt: -1 }) // Sort by newest first
       .skip(skip)
-      .limit(limit)
+      .limit(limit);
 
     // Get total count for pagination
-    const total = await Job.countDocuments({ client: client_id })
+    const total = await Job.countDocuments({ client: client_id });
 
     res.status(200).json({
       status: "success",
@@ -145,18 +147,18 @@ export const getAllJobsByClient = async (req: Request, res: Response) => {
           pages: Math.ceil(total / limit)
         }
       }
-    })
-    return
+    });
+    return;
   } catch (error) {
-    console.error("Error fetching client jobs:", error)
+    console.error("Error fetching client jobs:", error);
     res.status(500).json({
       status: "error",
       message: "Failed to fetch client jobs",
       response: error instanceof Error ? error.message : String(error)
-    })
-    return
+    });
+    return;
   }
-}
+};
 
 export const getJobById = async (req: Request, res: Response) => {
   try {
@@ -271,6 +273,30 @@ export const deleteJob = async (req: Request, res: Response) => {
       status: "error",
       message: "Failed to delete job",
       response: error
+    });
+    return;
+  }
+};
+
+export const getJobProposals = async (req: Request, res: Response) => {
+  try {
+    const { jobId } = req.params;
+    const proposals = await Proposal.find({ job: jobId }).populate(
+      "artisan",
+      "first_name last_name profile_picture categories years_of_experience"
+    );
+
+    res.status(200).json({
+      status: "success",
+      message: "Proposals fetched",
+      response: proposals
+    });
+    return;
+  } catch (error: any) {
+    res.status(500).json({
+      status: "error",
+      message: "Failed to get proposals",
+      response: error.message
     });
     return;
   }
